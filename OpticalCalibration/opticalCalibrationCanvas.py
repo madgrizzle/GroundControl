@@ -524,8 +524,15 @@ class OpticalCalibrationCanvas(GridLayout):
                 height, width, channels = image.shape
                 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
                 gray = cv2.GaussianBlur(gray, (15, 15), 2, 2)
-                circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1, width/8, param1=60, param2=40, minRadius=5, maxRadius=100)
+                edged = cv2.Canny(gray, 70, 90)
+                #cv2.imshow("Canny", edged)
+                edged = cv2.dilate(edged, None, iterations=1)
+                edged = cv2.erode(edged, None, iterations=1)
+                cnts = cv2.findContours(edged.copy(), cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
+                cnts = cnts[0] if imutils.is_cv2() else cnts[1]
+                (cnts, _) = contours.sort_contours(cnts)
                 colors = ((0, 0, 255), (240, 0, 159), (0, 165, 255), (255, 255, 0), (255, 0, 255))
+                refObj = None
 
                 if self.opticalCenter[0] is None or self.opticalCenter[1] is None:
                     xA = int(width/2)
@@ -540,42 +547,61 @@ class OpticalCalibrationCanvas(GridLayout):
 
                 orig = image.copy()
                 print "found "+str(len(circles))+" circles"
-                circles = np.around(circles,decimals=3)
+                filteredCnts = []
+                for cTest in cnts:
+                    (x,y),r = cv2.minEnclosingCircle(cTest)
+                    cv2.circle(orig,(int(x),int(y)),int(r),(255,255,0),2)
+                    if r>10:
+                        filteredCnts.append(cTest)
+                        print ". "+str(cv2.contourArea(cTest))+", "+str(r)
+                    else:
+                        print "X "+str(cv2.contourArea(cTest))+", "+str(r)
+                print "filtered to "+str(len(filteredCnts))+" circles"
+                circles = []
                 minDist = 99999.0
-                for i in circles[0,:]:
-                    cv2.circle(orig,(int(i[0]),int(i[1])),i[2],(0,255,0),2)
-                    _dist = dist.euclidean((xA,yA), (i[0],i[1]))
+                for i in filteredCnts:
+                    (x,y),r = cv2.minEnclosingCircle(i)
+                    cv2.circle(orig,(int(x),int(y)),int(r),(0,255,0),2)
+                    circles.append([(x,y),r])
+                    _dist = dist.euclidean((xA,yA), (x,y))
                     if _dist < minDist:
                         minDist = _dist
-                        c = i
-
+                        c = [(x,y),r]
+                #cv2.imshow("image", orig)
+                #cv2.waitKey(0)
                 #to determine rotation, find the closest circle to the target circle and calculate the angle
                 #determine from this angle if it's above, below, left or right of the target circle
                 #and translate the point accordingly
                 minDist = 99999.0
-                for i in circles[0,:]:
-                    if (i!=c).any():
-                        _dist=dist.euclidean((c[0],c[1]), (i[0],i[1]))
+                #print c
+                for i in circles:
+                    if (i!=c):#.any():
+                        #print i
+                        _dist=dist.euclidean(c[0], i[0])
                         if _dist < minDist:
                             minDist = _dist
                             d = i
 
-                cv2.circle(orig,(int(d[0]),int(d[1])),d[2],(0,255,255),2)
-                angle = math.atan2(d[1]-c[1], d[0]-c[0])
+                dx,dy = d[0]
+                dr = d[1]
+                cx,cy = c[0]
+                cr = c[1]
+                cv2.circle(orig,(int(dx),int(dy)),int(dr),(0,255,255),2)
+                angle = math.atan2(dy-cy, dx-cx)
                 print "Computed angle = "+str(math.degrees(angle))
                 cv2.imshow("image", orig)
 
-                if c[2] > 10:
-                    cv2.circle(orig,(int(c[0]),int(c[1])),c[2],(255,0,0),2)
-                    xB = c[0]
-                    yB = c[1]
+                if c[1] > 10:
+                    cv2.circle(orig,(int(cx),int(cy),int(cr),(255,0,0),2)
+                    xB = cx
+                    yB = cy
                     xB,yB,angle = translatePoint(xB,yB,xA,yA,math.degrees(angle))
                     print str(xB)+", "+str(yB)+", "+str(math.degrees(angle))
                     print "-------"
                     print "xA="+str(xA)+", yA="+str(yA)+", xB="+str(xB)+", yB="+str(yB)
 
                     if doCalibrate == True:
-                        self.D = c[2]*2.0/self.markerWidth
+                        self.D = cr*2.0/self.markerWidth
                         self.ids.OpticalCalibrationAutoMeasureButton.disabled = False
 
                     self.drawCrosshairOnImage(orig, xA, yA, colors[0])
