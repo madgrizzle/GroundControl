@@ -272,7 +272,7 @@ class OpticalCalibrationCanvas(GridLayout):
             self.capture = None
             self.parent.parent.parent.dismiss()
 
-    def translatePoint(xB, yB, xA, yA, angle):
+    def translatePoint(self, xB, yB, xA, yA, angle):
         if (angle < -45 ) and (angle >-135):
             angle += 90
             angle *= -1.0
@@ -514,7 +514,7 @@ class OpticalCalibrationCanvas(GridLayout):
         dyList = np.zeros(shape=(10))#[-9999.9 for x in range(10)]
         diList = np.zeros(shape=(10))#[-9999.9 for x in range(10)]
         print "here"
-        x = 0
+        count = 0
         while True:
         #for x in range(10):  #review 10 images
             #print x
@@ -546,7 +546,7 @@ class OpticalCalibrationCanvas(GridLayout):
                 self.drawCrosshairOnVideoForImagePoint(xA, yA, width, height, colors[4], group='center_marker')
 
                 orig = image.copy()
-                print "found "+str(len(circles))+" circles"
+                print "found "+str(len(cnts))+" contours"
                 filteredCnts = []
                 for cTest in cnts:
                     (x,y),r = cv2.minEnclosingCircle(cTest)
@@ -589,13 +589,14 @@ class OpticalCalibrationCanvas(GridLayout):
                 cv2.circle(orig,(int(dx),int(dy)),int(dr),(0,255,255),2)
                 angle = math.atan2(dy-cy, dx-cx)
                 print "Computed angle = "+str(math.degrees(angle))
-                cv2.imshow("image", orig)
+                #cv2.imshow("image", orig)
 
                 if c[1] > 10:
-                    cv2.circle(orig,(int(cx),int(cy),int(cr),(255,0,0),2)
+                    cv2.circle(orig,(int(cx),int(cy)),int(cr),(255,0,0),2)
                     xB = cx
                     yB = cy
-                    xB,yB,angle = translatePoint(xB,yB,xA,yA,math.degrees(angle))
+                    print str(xB)+", "+str(yB)+", "+str(math.degrees(angle))
+                    xB,yB,angle = self.translatePoint(xB,yB,xA,yA,math.degrees(angle))
                     print str(xB)+", "+str(yB)+", "+str(math.degrees(angle))
                     print "-------"
                     print "xA="+str(xA)+", yA="+str(yA)+", xB="+str(xB)+", yB="+str(yB)
@@ -614,12 +615,12 @@ class OpticalCalibrationCanvas(GridLayout):
                     Dy = dist.euclidean((0,yA), (0,yB))/self.D
                     if (yA<yB):
                         Dy *= -1
-                    dxList[x] = Dx
-                    dyList[x] = Dy
-                    diList[x] = Dist
-                    x +=1
+                    dxList[count] = Dx
+                    dyList[count] = Dy
+                    diList[count] = Dist
+                    count +=1
                     print "Processed Image #"+str(x)
-                    if (x==10):
+                    if (count==10):
                         break
         print "Done Analyzing Images.. Now Averaging and Removing Outliers"
         if dxList.ndim != 0 :
@@ -637,12 +638,13 @@ class OpticalCalibrationCanvas(GridLayout):
             else:
                 cv2.putText(orig, "("+str(self.HomingPosX)+", "+str(self.HomingPosY)+")",(15, 15),cv2.FONT_HERSHEY_SIMPLEX, 0.55, colors[0], 2)
                 cv2.putText(orig, "Dx:{:.3f}, Dy:{:.3f}->Di:{:.3f}mm".format(Dx,Dy,Dist), (15, 40),cv2.FONT_HERSHEY_SIMPLEX, 0.55, colors[0], 2)
+                cv2.putText(orig, "(xB:{:.3f}, yB:{:.3f})".format(xB,yB), (15, 65),cv2.FONT_HERSHEY_SIMPLEX, 0.55, colors[0], 2)
                 self.ids.MeasuredImage.update(orig)
                 self.HomingX += avgDx#-self.calX
                 self.HomingY += avgDy#-self.calY
                 print "testing location"
                 if doCalibrate!=True:  #its either True because you pressed the calibrate button or its a distance from the measurement callback.
-                    if (((abs(avgDx)>=0.125) or (abs(avgDy)>=0.125)) and (self.inMeasureOnlyMode==False)):
+                    if (((abs(avgDx)>=0.125) or (abs(avgDy)>=0.125)) ):
                         print "Adjusting Location"
                         self.HomeIn()
                     else:
@@ -723,63 +725,98 @@ class OpticalCalibrationCanvas(GridLayout):
 
         self.ids.MeasuredImage.update(image)
 
+        height, width, channels = image.shape
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        gray = cv2.GaussianBlur(gray, (5, 5), 0)
-        edged = cv2.Canny(gray, 50, 100)
+        gray = cv2.GaussianBlur(gray, (15, 15), 2, 2)
+        edged = cv2.Canny(gray, 70, 90)
+        #cv2.imshow("Canny", edged)
         edged = cv2.dilate(edged, None, iterations=1)
         edged = cv2.erode(edged, None, iterations=1)
-        cnts = cv2.findContours(edged.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        cnts = cv2.findContours(edged.copy(), cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
         cnts = cnts[0] if imutils.is_cv2() else cnts[1]
         (cnts, _) = contours.sort_contours(cnts)
-        height, width, channels = image.shape
+        colors = ((0, 0, 255), (240, 0, 159), (0, 165, 255), (255, 255, 0), (255, 0, 255))
+        refObj = None
 
-        colors = ((0, 0, 255), (240, 0, 159), (0, 165, 255), (255, 255, 0),
-                  (255, 0, 255))
+        if self.opticalCenter[0] is None or self.opticalCenter[1] is None:
+            xA = int(width/2)
+            yA = int(height/2)
+        else:
+            xA, yA = self.opticalCenter
+
+        # Draw a center marker on the video (for spot-checking that we hit the target)
+        self.ids.KivyCamera.canvas.remove_group('center_marker')
+        print "Using optical center (%.2f, %.2f)" % (xA, yA)
+        self.drawCrosshairOnVideoForImagePoint(xA, yA, width, height, colors[4], group='center_marker')
 
         orig = image.copy()
-        maxArea = 0
-        c = 0
+        print "found "+str(len(cnts))+" contours"
+        filteredCnts = []
         for cTest in cnts:
-            if cv2.contourArea(cTest) > maxArea:
-                maxArea = cv2.contourArea(cTest)
-                c = cTest
+            (x,y),r = cv2.minEnclosingCircle(cTest)
+            cv2.circle(orig,(int(x),int(y)),int(r),(255,255,0),2)
+            if r>10:
+                filteredCnts.append(cTest)
+                print ". "+str(cv2.contourArea(cTest))+", "+str(r)
+            else:
+                print "X "+str(cv2.contourArea(cTest))+", "+str(r)
+        print "filtered to "+str(len(filteredCnts))+" circles"
+        circles = []
+        minDist = 99999.0
+        for i in filteredCnts:
+            (x,y),r = cv2.minEnclosingCircle(i)
+            cv2.circle(orig,(int(x),int(y)),int(r),(0,255,0),2)
+            circles.append([(x,y),r])
+            _dist = dist.euclidean((xA,yA), (x,y))
+            if _dist < minDist:
+                minDist = _dist
+                c = [(x,y),r]
+        #cv2.imshow("image", orig)
+        #cv2.waitKey(0)
+        #to determine rotation, find the closest circle to the target circle and calculate the angle
+        #determine from this angle if it's above, below, left or right of the target circle
+        #and translate the point accordingly
+        minDist = 99999.0
+        #print c
+        for i in circles:
+            if (i!=c):#.any():
+                #print i
+                _dist=dist.euclidean(c[0], i[0])
+                if _dist < minDist:
+                    minDist = _dist
+                    d = i
 
-        if cv2.contourArea(c) <= 1000:
-            Popup(title="Error", content=Label(text="cv2.contourArea(c) <= 1000 (bad I think?)"),
-                  size_hint=(None, None), size=(400, 400)).open()
-            return
+        dx,dy = d[0]
+        dr = d[1]
+        cx,cy = c[0]
+        cr = c[1]
+        cv2.circle(orig,(int(dx),int(dy)),int(dr),(0,255,255),2)
+        angle = math.atan2(dy-cy, dx-cx)
+        print "Computed angle = "+str(math.degrees(angle))
+        #cv2.imshow("image", orig)
 
-        # approximate to a square (i.e., four contour segments)
-        cv2.drawContours(orig, [c.astype("int")], -1, (255, 255, 0), 2)
-        # simplify the contour to get it as square as possible (i.e., remove the noise from the edges)
-        c = self.simplifyContour(c)
-        cv2.drawContours(orig, [c.astype("int")], -1, (255, 0, 0), 2)
-        box = cv2.minAreaRect(c)
+        if c[1] > 10:
+            cv2.circle(orig,(int(cx),int(cy)),int(cr),(255,0,0),2)
+            xB = cx
+            yB = cy
+            xB,yB,angle = self.translatePoint(xB,yB,xA,yA,math.degrees(angle))
+            print str(xB)+", "+str(yB)+", "+str(math.degrees(angle))
+            print "-------"
+            print "xA="+str(xA)+", yA="+str(yA)+", xB="+str(xB)+", yB="+str(yB)
+            self.drawCrosshairOnImage(orig, xB, yB, colors[3])
+            self.ids.MeasuredImage.update(orig)
+            self.drawCrosshairOnVideoForImagePoint(xB, yB, width, height)
 
-        box = cv2.cv.BoxPoints(box) if imutils.is_cv2() else cv2.boxPoints(
-            box)
-        box = np.array(box, dtype="int")
-        box = perspective.order_points(box)
-
-        cv2.drawContours(orig, [box.astype("int")], -1, (0, 255, 0), 2)
-
-        xB = np.average(box[:, 0])
-        yB = np.average(box[:, 1])
-
-        self.drawCrosshairOnImage(orig, xB, yB, colors[3])
-        self.ids.MeasuredImage.update(orig)
-        self.drawCrosshairOnVideoForImagePoint(xB, yB, width, height)
-
-        self.cameraCenteringPoints.append((xB, yB))
-        if len(self.cameraCenteringPoints) >= 3:
-            # TODO: Average over all (or at least some) possible circles for the center point and radius
-            # TODO: Sanity check that the circle is sane
-            cX, cY = calculateCenterOfArc(self.cameraCenteringPoints[-3], self.cameraCenteringPoints[-2], self.cameraCenteringPoints[-1])
-            self.ids.KivyCamera.canvas.remove_group('center_marker')
-            self.drawCrosshairOnVideoForImagePoint(cX, cY, width, height, colors[4], group='center_marker')
-            print "found a potential center point: %f, %f" % (cX, cY)
-            radius = dist.euclidean((cX, cY),(self.cameraCenteringPoints[-1][0], self.cameraCenteringPoints[-1][1]))
-            self.drawCircleOnVideo(cX, cY, radius, width, height)
-            self.ids.centerX.text = "%.1f" % cX
-            self.ids.centerY.text = "%.1f" % cY
-            self.opticalCenter = (cX, cY)
+            self.cameraCenteringPoints.append((xB, yB))
+            if len(self.cameraCenteringPoints) >= 3:
+                # TODO: Average over all (or at least some) possible circles for the center point and radius
+                # TODO: Sanity check that the circle is sane
+                cX, cY = calculateCenterOfArc(self.cameraCenteringPoints[-3], self.cameraCenteringPoints[-2], self.cameraCenteringPoints[-1])
+                self.ids.KivyCamera.canvas.remove_group('center_marker')
+                self.drawCrosshairOnVideoForImagePoint(cX, cY, width, height, colors[4], group='center_marker')
+                print "found a potential center point: %f, %f" % (cX, cY)
+                radius = dist.euclidean((cX, cY),(self.cameraCenteringPoints[-1][0], self.cameraCenteringPoints[-1][1]))
+                self.drawCircleOnVideo(cX, cY, radius, width, height)
+                self.ids.centerX.text = "%.1f" % cX
+                self.ids.centerY.text = "%.1f" % cY
+                self.opticalCenter = (cX, cY)
