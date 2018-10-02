@@ -207,6 +207,12 @@ class OpticalCalibrationCanvas(GridLayout):
         self.updatePositionIndicator(0,0,self.data.units)
         self.updateTargetIndicator(0,0,self.data.units)
         self.updateCurveCoefficients()
+        '''
+        activate web server
+        '''
+
+
+
 
     def updatePositionIndicator(self,x,y,units):
         if (units=="MM"):

@@ -17,11 +17,13 @@ from kivy.core.window           import Window
 from kivy.uix.button            import Button
 from kivy.clock                 import Clock
 from kivy.uix.popup             import Popup
+from BaseHTTPServer             import BaseHTTPRequestHandler,HTTPServer
 import math
 import global_variables
 import sys
 import re
 import json
+import threading
 
 '''
 
@@ -45,6 +47,8 @@ from UIElements.notificationPopup import   NotificationPopup
 from Settings                     import   maslowSettings
 from UIElements.backgroundMenu    import   BackgroundMenu
 from OpticalCalibration.opticalCalibrationCanvas    import OpticalCalibrationCanvas
+from WebService.webHandler        import   webHandler
+
 '''
 
 Main UI Program
@@ -147,6 +151,14 @@ class GroundControlApp(App):
         '''
         self.data.bind(connectionStatus = self.requestMachineSettings)
         self.data.pushSettings = self.requestMachineSettings
+
+        PORT_NUMBER = 8000
+        self.server = HTTPServer(('', PORT_NUMBER), webHandler)
+    	print 'Started httpserver on port ' , PORT_NUMBER
+
+        self.webServerThread = threading.Thread(target=self.server.serve_forever)
+        self.webServerThread.daemon = True
+        self.webServerThread.start()
 
         return interface
 
