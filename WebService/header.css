@@ -1,0 +1,10 @@
+button:disabled {
+  background: #EEEEEE;
+  color:#FFFFFF;
+}
+button:enabled {
+  background: #3BB9FF;
+  color:#FFFFFF;
+}
+.grid-container { display: grid; grid-template-columns: auto auto auto; grid-gap: 10px; background-color: #cccccc; padding: 10px; width: 400px}
+.grid-container > div { background-color: rgba(255, 255, 255, 0.8); text-align: center; padding: 20px 0; font-size: 30px;}

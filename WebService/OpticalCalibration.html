@@ -1,0 +1,16 @@
+<html>
+<head>
+  <link rel='stylesheet' type='text/css' href='/header.css'>
+  <script src='header.js'></script>
+  <button style='width:100px; height:60px; background-color:#3BB9FF; color:#FFFFFF' id='enabler' ondblclick='doubleClick()' onmousedown='func(event)' onmouseup='revert()'>Enable</button>
+  <title>Maslow Optical Calibration</title>
+</head>
+<body>
+  <div class='grid-container'>
+    <button style='width:100px; height:60px;' onclick='sendAction(\"Calibrate\",\"Optical Calibration\");'>Calibrate</button>
+    <button style='width:100px; height:60px;' onclick='sendAction(\"Exit\",\"Optical Calibration\");'>Exit</button>
+    <button style='width:100px; height:60px;' onclick='sendAction(\"CalibrateSledRotation\",\"Optical Calibration\");'>Calibrate Center of\nSled Rotation</button>
+    <button style='width:100px; height:60px;' onclick='sendAction(\"CalibrateDimensions\",\"Optical Calibration\");'>Calibrate\nDimensions</button>
+    <button style='width:100px; height:60px;' onclick='sendAction(\"ReturnToCenter\",\"Optical Calibration\");'>Return to\nCenter</button>
+  </div>
+</body>

@@ -64,6 +64,7 @@ class GroundControlApp(App):
     def build(self):
 
         interface       =  FloatLayout()
+        self.activeWidget = None
         self.data       =  Data()
 
         if self.config.get('Maslow Settings', 'colorScheme') == 'Light':
@@ -435,6 +436,8 @@ class GroundControlApp(App):
                 pass #displaying all the 'ok' messages clutters up the display
             else:
                 self.writeToTextConsole(message)
+        if self.activeWidget == None:
+            self.activeWidget = self.frontpage
 
     def ondismiss_popup(self, event):
         if global_variables._keyboard:

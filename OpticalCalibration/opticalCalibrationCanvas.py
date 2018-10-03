@@ -135,6 +135,7 @@ class OpticalCalibrationCanvas(GridLayout):
     #def initialize(self):
 
     def initialize(self):
+        App.get_running_app().activeWidget = self
         xyErrors = self.data.config.get('Optical Calibration Settings', 'xyErrorArray')
         self.calErrorsX, self.calErrorsY = maslowSettings.parseErrorArray(xyErrors, True)
         self.bedHeight = float(self.data.config.get('Maslow Settings', 'bedHeight'))
@@ -402,6 +403,7 @@ class OpticalCalibrationCanvas(GridLayout):
             except:
                 print "error"
             self.capture = None
+        App.get_running_app().activeWidget = None
         self.parent.parent.parent.dismiss()
 
     def translatePoint(self, xB, yB, xA, yA, angle):
