@@ -390,11 +390,19 @@ class OpticalCalibrationCanvas(GridLayout):
     def midpoint(self, ptA, ptB):
         return ((ptA[0]+ptB[0])*0.5, (ptA[1]+ptB[1])*0.5)
 
+
     def do_Exit(self):
+        print self
         if self.capture != None:
-            self.capture.release()
+#            print self.capture
+            #self.ids.KivyCamera.start(self.capture)
+            #cv2.VideoCapture(0).release()
+            try:
+                self.capture.release()
+            except:
+                print "error"
             self.capture = None
-            self.parent.parent.parent.dismiss()
+        self.parent.parent.parent.dismiss()
 
     def translatePoint(self, xB, yB, xA, yA, angle):
         cosa = math.cos((angle)*3.141592/180.0)
