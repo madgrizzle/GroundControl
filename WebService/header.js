@@ -51,7 +51,7 @@ function doubleClick(){
   if (isDisabled){ enableBtn(false); isDisabled=false;}else{disableBtn(); isDisabled=true;}
 }
 
-function sendAction(action,widget){
+function sendAction(action,widget,reload){
   var xhr = new XMLHttpRequest();
   xhr.open('PUT', '/action');
   xhr.setRequestHeader('Content-Type', 'application/json');
@@ -64,4 +64,7 @@ function sendAction(action,widget){
     }
   };
   xhr.send(JSON.stringify({action:action,widget:widget}));
+  if (reload){
+     setTimeout(function(){ location.reload();},1000);
+  }
 }

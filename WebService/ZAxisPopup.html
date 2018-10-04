@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel='stylesheet' type='text/css' href='/bulma.min.css'>
+  <script src='awesomefonts.js'></script>
+  <script src='header.js'></script>
+  <title>Z-Axis</title>
+</head>
+<body>
+  <section class="section">
+    <label class="label">Distance</label>
+    <div class="columns is-mobile">
+      <div class="column is-two-third">
+        <div class="field has-addons">
+          <div class="control">
+            <input class="input is-medium"  type="text" placeholder="">
+          </div>
+          <button class="button is-primary is-medium" onclick='sendAction("Submit","ZAxisPopup",false)'>
+            <span>Submit</span>
+          </button>
+        </div>
+      </div>
+      <div class="column is-one-third">
+          <button class="button is-dark is-medium is-fullwidth" onclick='sendAction("Units","ZAxisPopup",false)'>
+            <span class="icon">
+              <i class="fas fa-ruler fa-lg"></i>
+              <span>INCHES</span>
+            </span>
+          </button>
+      </div>
+    </div>
+    <div class="columns is-mobile">
+      <div class="column is-one-third">
+          <button class="button is-light is-medium is-fullwidth" onclick='sendAction("Raise","ZAxisPopup",false)'>
+            <span class="icon">
+              <i class="fas fa-arrow-up fa-lg"></i>
+            </span>
+            <span>Raise</span>
+          </button>
+      </div>
+    </div>
+
+    <div class="columns is-mobile">
+      <div class="column is-one-third">
+          <button class="button is-dark is-medium is-fullwidth" onclick='sendAction("Done","ZAxisPopup",true)'>
+            <span class="icon">
+              <i class="fas fa-check-circle fa-lg"></i>
+            </span>
+            <span>Done</span>
+          </button>
+      </div>
+      <div class="column is-one-third">
+        <button class="button is-link is-medium is-fullwidth" onclick='sendAction("Define","ZAxisPopup",false)'>
+          <span>Define Zero</span>
+        </button>
+      </div>
+      <div class="column is-one-third">
+          <button class="button is-light is-medium is-fullwidth" onclick='sendAction("Lower","ZAxisPopup",false)'>
+            <span class="icon">
+              <i class="fas fa-arrow-up fa-lg"></i>
+            </span>
+            <span>Lower</span>
+          </button>
+      </div>
+    </div>
+
+    <button class="button is-link is-medium is-fullwidth" id='enabler' ondblclick='doubleClick()' onpointerdown='func(event)' onpointerup='revert()'>Enable</button>
+
+  </div>
+</body>

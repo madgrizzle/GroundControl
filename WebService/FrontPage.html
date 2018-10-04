@@ -1,12 +1,190 @@
+<!DOCTYPE html>
 <html>
 <head>
-  <link rel='stylesheet' type='text/css' href='/header.css'>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel='stylesheet' type='text/css' href='/bulma.min.css'>
+  <script src='awesomefonts.js'></script>
   <script src='header.js'></script>
-  <button style='width:100px; height:60px; background-color:#3BB9FF; color:#FFFFFF' id='enabler' ondblclick='doubleClick()' onmousedown='func(event)' onmouseup='revert()'>Enable</button>
   <title>Front Page</title>
 </head>
 <body>
-  <div class='grid-container'>
-    <button style='width:100px; height:60px;' onclick='sendAction(\"Home\",\"FrontPage\")'>Home</button>
+  <section class="section">
+    <div class="columns is-mobile is-medium">
+      <div class="column is-one-third">
+          <button class="button is-light is-medium is-fullwidth" onclick='sendAction("UpLeft","FrontPage",false);'>
+            <span class="icon">
+              <i class="fas fa-arrow-circle-left fa-lg"></i>
+            </span>
+          </button>
+      </div>
+      <div class="column is-one-third">
+          <button class="button is-dark is-medium is-fullwidth" onclick='sendAction("Up","FrontPage",false)'>
+            <span class="icon">
+              <i class="fas fa-arrow-circle-up fa-lg"></i>
+            </span>
+          </button>
+      </div>
+      <div class="column is-one-third">
+          <button class="button is-light is-medium is-fullwidth" onclick='sendAction("Right","FrontPage",false)'>
+            <span class="icon">
+              <i class="fas fa-arrow-circle-right fa-lg"></i>
+            </span>
+          </button>
+      </div>
+    </div>
+
+    <div class="columns is-mobile">
+      <div class="column is-one-third">
+          <button class="button is-dark is-medium is-fullwidth" onclick='sendAction("Left","FrontPage",false)'>
+            <span class="icon">
+              <i class="fas fa-arrow-circle-left fa-lg"></i>
+            </span>
+          </button>
+      </div>
+      <div class="column is-one-third">
+          <button class="button is-primary is-medium is-fullwidth" onclick='sendAction("Home","FrontPage",false)'>
+            <span class="icon">
+              <i class="fas fa-home fa-lg"></i>
+            </span>
+          </button>
+      </div>
+      <div class="column is-one-third">
+          <button class="button is-dark is-medium is-fullwidth" onclick='sendAction("Right","FrontPage",false)'>
+            <span class="icon">
+              <i class="fas fa-arrow-circle-right fa-lg"></i>
+            </span>
+          </button>
+      </div>
+    </div>
+
+    <div class="columns is-mobile">
+      <div class="column is-one-third">
+          <button class="button is-light is-medium is-fullwidth" onclick='sendAction("DownLeft","FrontPage",false)'>
+            <span class="icon">
+              <i class="fas fa-arrow-circle-left fa-lg"></i>
+            </span>
+          </button>
+      </div>
+      <div class="column is-one-third">
+          <button class="button is-dark is-medium is-fullwidth" onclick='sendAction("Down","FrontPage",false)'>
+            <span class="icon">
+              <i class="fas fa-arrow-circle-down fa-lg"></i>
+            </span>
+          </button>
+      </div>
+      <div class="column is-one-third">
+          <button class="button is-light is-medium is-fullwidth" onclick='sendAction("DownRight","FrontPage",false)'>
+            <span class="icon">
+              <i class="fas fa-arrow-circle-right fa-lg"></i>
+            </span>
+          </button>
+      </div>
+    </div>
+
+    <div class="columns is-mobile">
+      <div class="column is-one-third">
+        <button class="button is-link is-medium is-fullwidth" onclick='sendAction("Define","FrontPage",false)'>
+          <span>Define</span>
+          <span class="icon">
+            <i class="fas fa-home fa-lg"></i>
+          </span>
+        </button>
+      </div>
+      <div class="column is-one-third">
+        <button class="button is-link is-medium is-fullwidth" onclick='sendAction("ZAxis","FrontPage",true)'>
+          <span>Z-Axis</span>
+          <span class="icon">
+            <i class="fas fa-arrows-alt-v fa-lg"></i>
+          </span>
+        </button>
+      </div>
+    </div>
+
+    <div class="columns is-mobile">
+      <div class="column is-one-third">
+        <button class="button is-success is-primary is-medium is-fullwidth" onclick='sendAction("Play","FrontPage",false)'>
+          <span class="icon">
+            <i class="fas fa-play fa-lg"></i>
+          </span>
+        </button>
+      </div>
+      <div class="column is-one-third">
+        <button class="button is-warning is-primary is-medium is-fullwidth" onclick='sendAction("Pause","FrontPage",false)'>
+          <span class="icon">
+            <i class="fas fa-pause fa-lg"></i>
+          </span>
+        </button>
+      </div>
+      <div class="column is-one-third">
+        <button class="button is-danger is-primary is-medium is-fullwidth" onclick='sendAction("Stop","FrontPage",false)'>
+          <span class="icon">
+            <i class="fas fa-stop fa-lg"></i>
+          </span>
+        </button>
+      </div>
+    </div>
+
+    <div class="columns is-mobile">
+      <div class="column is-one-fifth">
+        <button class="button is-primary is-medium is-fullwidth" onclick='sendAction("BackZ","FrontPage",false)'>
+          <span class="icon">
+            <i class="fas fa-angle-left fa-lg"></i>
+          </span>
+          <span>Z</span>
+        </button>
+      </div>
+      <div class="column is-one-fifth">
+        <button class="button is-primary is-medium is-fullwidth" onclick='sendAction("Back1","FrontPage",false)'>
+          <span class="icon">
+            <i class="fas fa-angle-left fa-lg"></i>
+          </span>
+          <span>1</span>
+        </button>
+      </div>
+      <div class="column is-one-fifth">
+        <button class="button is-primary is-medium is-fullwidth" onclick='sendAction("Goto","FrontPage",false)'>
+          <span>Goto</span>
+        </button>
+      </div>
+      <div class="column is-one-fifth">
+        <button class="button is-primary is-medium is-fullwidth" onclick='sendAction("Forward1","FrontPage",false)'>
+          <span class="icon">
+            <span>1</span>
+            <i class="fas fa-angle-right fa-lg"></i>
+          </span>
+        </button>
+      </div>
+      <div class="column is-one-fifth">
+        <button class="button is-primary is-medium is-fullwidth" onclick='sendAction("ForwardZ","FrontPage",false)'>
+          <span class="icon">
+            <span>Z</span>
+            <i class="fas fa-angle-right fa-lg"></i>
+          </span>
+        </button>
+      </div>
+    </div>
+
+    <div class="columns is-mobile">
+      <div class="column is-one-half">
+        <button class="button is-link is-medium is-fullwidth" onclick='sendAction("Macro1","FrontPage",false)'>
+          <span>Macro 1</span>
+          <span class="icon">
+            <i class="fas fa-walking fa-lg"></i>
+          </span>
+        </button>
+      </div>
+      <div class="column is-one-half">
+        <button class="button is-link is-medium is-fullwidth" onclick='sendAction("Macro1","FrontPage",false)'>
+          <span>Macro 2</span>
+          <span class="icon">
+            <i class="fas fa-walking fa-lg"></i>
+          </span>
+        </button>
+      </div>
+    </div>
+
+    <button class="button is-link is-medium is-fullwidth" id='enabler' ondblclick='doubleClick()' onpointerdown='func(event)' onpointerup='revert()'>Enable</button>
+
   </div>
 </body>

@@ -5,6 +5,7 @@ from kivy.uix.popup                          import Popup
 from kivy.uix.screenmanager                  import Screen
 from kivy.uix.floatlayout                    import FloatLayout
 from UIElements.frontPage                    import FrontPage
+from UIElements.zAxisPopupContent            import ZAxisPopupContent
 import urlparse
 import json
 from OpticalCalibration.opticalCalibrationCanvas    import OpticalCalibrationCanvas
@@ -65,8 +66,33 @@ class webHandler(BaseHTTPRequestHandler):
             arguments = { 'CalibrateSledRotation':{'findCenter':True},
                           'CalibrateDimensions':{'doCalibrate':True}}
         elif (_widget=="FrontPage"):
-            functions = {'Home':activeWidget.home }
-            arguments = { }
+            functions = {'Home':activeWidget.home,
+                         'UpLeft':activeWidget.upLeft,
+                         'Up':activeWidget.up,
+                         'UpRight':activeWidget.upRight,
+                         'Left':activeWidget.left,
+                         'Right':activeWidget.right,
+                         'DownLeft':activeWidget.downLeft,
+                         'Down':activeWidget.down,
+                         'DownRight':activeWidget.downRight,
+                         'ZAxis':activeWidget.zAxisPopup,
+                         'Play':activeWidget.startRun,
+                         'Pause':activeWidget.pause,
+                         'Stop':activeWidget.stopRun,
+                         'BackZ':activeWidget.moveGcodeZ,
+                         'Back1':activeWidget.moveGcodeIndex,
+                         'Goto':activeWidget.gotoLinePopup,
+                         'ForwardZ':activeWidget.moveGcodeZ,
+                         'Forward1':activeWidget.moveGcodeIndex,
+                         'Macro1':activeWidget.macro,
+                         'Macro2':activeWidget.macro
+                         }
+            arguments = { 'Macro1':{'index': 1},
+                          'Macro2':{'index': 2},
+                          'BackZ':{'moves': -1},
+                          'Back1':{'dist': -1},
+                          'FowardZ':{'moves':1},
+                          'Forward1':{'dist':1}}
 
         if _field in functions and _field in arguments:
             functions[_field](**arguments[_field])
@@ -83,6 +109,8 @@ class webHandler(BaseHTTPRequestHandler):
             fileName = "OpticalCalibration.html"
         elif type(_widget) is FrontPage:
             fileName = "FrontPage.html"
+        elif type(_widget) is ZAxisPopupContent:
+            fileName = "ZAxisPopup.html"
         else:
             fileName = "NotFound.html"
         f = open("WebService/"+fileName)
