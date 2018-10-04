@@ -183,8 +183,18 @@
         </button>
       </div>
     </div>
-
-    <button class="button is-link is-medium is-fullwidth" id='enabler' ondblclick='doubleClick()' onpointerdown='func(event)' onpointerup='revert()'>Enable</button>
-
+    <div class="columns is-mobile">
+      <div class="column is-one-half">
+        <button class="button is-primary is-medium is-fullwidth" id='enabler' onclick='location.reload();'>
+          <span class="icon">
+            <i class="fas fa-redo fa-lg"></i>
+          </span>
+          <span>Reload</span>
+        </button>
+      </div>
+      <div class="column is-one-half">
+        <button class="button is-link is-medium is-fullwidth" id='enabler' ondblclick='doubleClick()' onpointerdown='func(event)' onpointerup='revert()'>Enable</button>
+      </div>
+    </div>
   </div>
 </body>

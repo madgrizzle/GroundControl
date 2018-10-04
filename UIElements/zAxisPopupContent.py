@@ -17,6 +17,10 @@ class ZAxisPopupContent(GridLayout):
     unitsArmed=False
     onEntryUnits=""
 
+    def __init__(self, done, **kwargs):
+        super(ZAxisPopupContent,self).__init__(**kwargs)
+        self.done = done
+
     def initialize(self):
         '''
 
@@ -24,7 +28,7 @@ class ZAxisPopupContent(GridLayout):
 
         '''
         App.get_running_app().activeWidget = self
-
+        #App.get_running_app().root.popupreference=self
         self.onEntryUnits= self.data.units
         if self.data.zPopupUnits is None:
             self.data.zPopupUnits = self.data.units
@@ -32,6 +36,8 @@ class ZAxisPopupContent(GridLayout):
         if self.data.zPush is not None:
             self.zCutLabel = "Re-Plunge to\n"+'%.3f '%(self.data.zPush)+self.data.zPushUnits[:2]
             self.zPopDisable=False
+
+
 
     def setMachineUnits(self, units=None):
         if units is None:
@@ -50,11 +56,16 @@ class ZAxisPopupContent(GridLayout):
         else:
             self.data.gcode_queue.put('G21 ')
 
-    def setDist(self):
-        self.popupContent = TouchNumberInput(done=self.dismiss_popup, data = self.data)
-        self._popup = Popup(title="Change increment size of machine movement", content=self.popupContent,
-                            size_hint=(0.9, 0.9))
-        self._popup.open()
+    def setDist(self, value = None):
+        if value != None:
+            self.data.zStepSizeVal = float(value)
+            self.distBtn.text = "%.3f"%self.data.zStepSizeVal
+            print self.distBtn.text
+        else:
+            self.popupContent = TouchNumberInput(done=self.dismiss_popup, data = self.data)
+            self._popup = Popup(title="Change increment size of machine movement", content=self.popupContent,
+                                size_hint=(0.9, 0.9))
+            self._popup.open()
 
 
     def units(self):

@@ -15,34 +15,46 @@
       <div class="column is-two-third">
         <div class="field has-addons">
           <div class="control">
-            <input class="input is-medium"  type="text" placeholder="">
+            <input id='distanceValue' class="input is-medium"  type="text" placeholder="">
           </div>
-          <button class="button is-primary is-medium" onclick='sendAction("Submit","ZAxisPopup",false)'>
+          <button class="button is-primary is-medium" onclick='sendAction("SetDist","ZAxisPopup",false,"distanceValue")'>
             <span>Submit</span>
           </button>
         </div>
       </div>
       <div class="column is-one-third">
-          <button class="button is-dark is-medium is-fullwidth" onclick='sendAction("Units","ZAxisPopup",false)'>
+          <button class="button is-link is-medium is-fullwidth" onclick='sendAction("Units","ZAxisPopup",false)'>
             <span class="icon">
               <i class="fas fa-ruler fa-lg"></i>
-              <span>INCHES</span>
+              <span id=unitsLabel data-dynamiclabel = "true">INCHES</span>
             </span>
           </button>
       </div>
     </div>
     <div class="columns is-mobile">
       <div class="column is-one-third">
-          <button class="button is-light is-medium is-fullwidth" onclick='sendAction("Raise","ZAxisPopup",false)'>
+          <button class="button is-link is-medium is-fullwidth" onclick='sendAction("Raise","ZAxisPopup",false)'>
             <span class="icon">
               <i class="fas fa-arrow-up fa-lg"></i>
             </span>
             <span>Raise</span>
           </button>
       </div>
+      <div class="column is-one-third">
+          <button class="button is-link is-medium is-fullwidth" onclick='sendAction("GotoZero","ZAxisPopup",false)'>
+            <span>Goto Zero</span>
+          </button>
+      </div>
     </div>
-
     <div class="columns is-mobile">
+      <div class="column is-one-third">
+          <button class="button is-link is-medium is-fullwidth" onclick='sendAction("Lower","ZAxisPopup",false)'>
+            <span class="icon">
+              <i class="fas fa-arrow-down fa-lg"></i>
+            </span>
+            <span>Lower</span>
+          </button>
+      </div>
       <div class="column is-one-third">
           <button class="button is-dark is-medium is-fullwidth" onclick='sendAction("Done","ZAxisPopup",true)'>
             <span class="icon">
@@ -56,17 +68,33 @@
           <span>Define Zero</span>
         </button>
       </div>
-      <div class="column is-one-third">
-          <button class="button is-light is-medium is-fullwidth" onclick='sendAction("Lower","ZAxisPopup",false)'>
-            <span class="icon">
-              <i class="fas fa-arrow-up fa-lg"></i>
-            </span>
-            <span>Lower</span>
-          </button>
+    </div>
+    <div class="columns is-mobile">
+      <div class="column is-full">
+        <button class="button is-link is-medium is-danger is-fullwidth" onclick='sendAction("Stop","ZAxisPopup",false)'>
+          <span class="icon">
+            <i class="fas fa-stop-circle fa-lg"></i>
+          </span>
+          <span>Stop</span>
+        </button>
       </div>
     </div>
 
-    <button class="button is-link is-medium is-fullwidth" id='enabler' ondblclick='doubleClick()' onpointerdown='func(event)' onpointerup='revert()'>Enable</button>
+    <div class="columns is-mobile">
+      <div class="column is-one-half">
+        <button class="button is-primary is-medium is-fullwidth" id='enabler' onclick='location.reload();'>
+          <span class="icon">
+            <i class="fas fa-redo fa-lg"></i>
+          </span>
+          <span>Reload</span>
+        </button>
+      </div>
+      <div class="column is-one-half">
+        <button class="button is-link is-medium is-fullwidth" id='enabler' ondblclick='doubleClick()' onpointerdown='func(event)' onpointerup='revert()'>Enable</button>
+      </div>
+    </div>
 
   </div>
 </body>
+
+<script>requestInputsAndButtonLabels()</script>

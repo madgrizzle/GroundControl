@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel='stylesheet' type='text/css' href='/bulma.min.css'>
+  <script src='awesomefonts.js'></script>
+  <script src='header.js'></script>
+  <title>Z-Axis</title>
+</head>
+<body>
+  <section class="section">
+    <div class="columns is-mobile">
+      <div class="column is-one-half">
+        <button class="button is-link is-medium is-fullwidth" onclick='sendAction("AdjustLeft","MeasureOutChains",false)'>
+          <span>Adjust Left</span>
+        </button>
+      </div>
+      <div class="column is-one-half">
+        <button class="button is-link is-medium is-fullwidth" onclick='sendAction("AdjustRight","MeasureOutChains",false)'>
+          <span>Adjust Right</span>
+        </button>
+      </div>
+    </div>
+    <div class="columns is-mobile">
+      <div class="column is-half">
+        <button class="button is-link is-medium is-fullwidth" onclick='sendAction("MoveToCenter","MeasureOutChains",false)'>
+          <span>Move to Center</span>
+        </button>
+      </div>
+    </div>
+    <div class="columns is-mobile">
+      <div class="column is-half">
+        <button class="button is-medium is-danger is-fullwidth" onclick='sendAction("Stop","MeasureOutChains",false)'>
+          <span class="icon">
+            <i class="fas fa-stop-circle fa-lg"></i>
+          </span>
+          <span>Stop</span>
+        </button>
+      </div>
+      <div class="column is-half">
+        <button class="button is-dark is-medium is-fullwidth" onclick='sendAction("Next","MeasureOutChains",false)'>
+          <span class="icon">
+            <i class="fas  fa-check-circle fa-lg"></i>
+          </span>
+          <span>Next</span>
+        </button>
+      </div>
+    </div>
+    <div class="columns is-mobile">
+      <div class="column is-one-half">
+        <button class="button is-primary is-medium is-fullwidth" id='enabler' onclick='location.reload();'>
+          <span class="icon">
+            <i class="fas fa-redo fa-lg"></i>
+          </span>
+          <span>Reload</span>
+        </button>
+      </div>
+      <div class="column is-one-half">
+        <button class="button is-link is-medium is-fullwidth" id='enabler' ondblclick='doubleClick()' onpointerdown='func(event)' onpointerup='revert()'>Enable</button>
+      </div>
+    </div>
+  </div>
+</body>
+
+<script>requestInputsAndButtonLabels()</script>

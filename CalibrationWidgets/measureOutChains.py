@@ -13,12 +13,15 @@ class MeasureOutChains(GridLayout):
     text              =  StringProperty("")
     countDownTime     =  0
 
+
     def on_Enter(self):
         '''
 
         This function runs when the step is entered
 
         '''
+        App.get_running_app().activeWidget = self
+
         self.data = App.get_running_app().data
         self.text =  "Now we are going to adjust the chains to a known length\n\nIf your chains are not attached place the first link of the chain on the vertical sprocket tooth\nIf your chains are already in place they may retract to the target length\n\nThe correct length of first the left and then the right chain will be measured out\n\nOnce both chains are finished attach the sled, then press Next\n\nThe Move to Center button will move the sled to the center.\n\nBe sure to keep an eye on the chains during this process to ensure that they do not become tangled\naround the sprocket. The motors are very powerful and the machine can damage itself this way"
 
@@ -45,8 +48,9 @@ class MeasureOutChains(GridLayout):
         self.data.gcode_queue.put("B15 ")
 
     def next(self):
-
+        App.get_running_app().activeWidget = None
         self.readyToMoveOn()
+
 
     '''
     Left Chain

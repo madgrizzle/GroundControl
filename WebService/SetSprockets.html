@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel='stylesheet' type='text/css' href='/bulma.min.css'>
+  <script src='awesomefonts.js'></script>
+  <script src='header.js'></script>
+  <title>Set Sprockets</title>
+</head>
+<body>
+  <section class="section">
+    <label class="label">Left Motor</label>
+    <div class="columns is-mobile is-variable is-1">
+      <div class="column is-one-fourth">
+          <button class="button is-link is-medium is-fullwidth" onclick='sendAction("Left360CCW","SetSprockets",false);'>
+            <span class="icon">
+              <i class="fas fa-undo fa-lg"></i>
+            </span>
+            <span>360 CCW</span>
+          </button>
+      </div>
+      <div class="column is-one-fourth">
+          <button class="button is-link is-medium is-fullwidth" onclick='sendAction("Left5CCW","SetSprockets",false)'>
+            <span class="icon">
+              <i class="fas fa-undo fa-lg"></i>
+            </span>
+            <span>5 CCW</span>
+          </button>
+      </div>
+      <div class="column is-one-fourt">
+          <button class="button is-link is-medium is-fullwidth" onclick='sendAction("Left1CCW","SetSprockets",false)'>
+            <span class="icon">
+              <i class="fas fa-undo fa-lg"></i>
+            </span>
+            <span>1 CCW</span>
+          </button>
+      </div>
+      <div class="column is-one-fourt">
+          <button class="button is-link is-medium is-fullwidth" onclick='sendAction("LeftP1CCW","SetSprockets",false)'>
+            <span class="icon">
+              <i class="fas fa-undo fa-lg"></i>
+            </span>
+            <span>0.1 CCW</span>
+          </button>
+      </div>
+    </div>
+    <div class="columns is-mobile is-variable is-1">
+      <div class="column is-one-fourth">
+          <button class="button is-link is-medium is-fullwidth" onclick='sendAction("Left360CW","SetSprockets",false);'>
+            <span class="icon">
+              <i class="fas fa-redo fa-lg"></i>
+            </span>
+            <span>360 &nbspCW </span>
+          </button>
+      </div>
+      <div class="column is-one-fourth">
+          <button class="button is-link is-medium is-fullwidth" onclick='sendAction("Left5CW","SetSprockets",false)'>
+            <span class="icon">
+              <i class="fas fa-redo fa-lg"></i>
+            </span>
+            <span>5 &nbspCW </span>
+          </button>
+      </div>
+      <div class="column is-one-fourth">
+          <button class="button is-link is-medium is-fullwidth" onclick='sendAction("Left1CW","SetSprockets",false)'>
+            <span class="icon">
+              <i class="fas fa-redo fa-lg"></i>
+            </span>
+            <span>1 &nbspCW </span>
+          </button>
+      </div>
+      <div class="column is-one-fourth">
+          <button class="button is-link is-medium is-fullwidth" onclick='sendAction("LeftP1CW","SetSprockets",false)'>
+            <span class="icon">
+              <i class="fas fa-redo fa-lg"></i>
+            </span>
+            <span>0.1 &nbspCW</span>
+          </button>
+      </div>
+    </div>
+
+    <label class="label">Right Motor</label>
+    <div class="columns is-mobile is-variable is-1">
+      <div class="column is-one-fourth">
+          <button class="button is-link is-medium is-fullwidth" onclick='sendAction("Right360CCW","SetSprockets",false);'>
+            <span class="icon">
+              <i class="fas fa-undo fa-lg"></i>
+            </span>
+            <span>360 CCW</span>
+          </button>
+      </div>
+      <div class="column is-one-fourth">
+          <button class="button is-link is-medium is-fullwidth" onclick='sendAction("Right5CCW","SetSprockets",false)'>
+            <span class="icon">
+              <i class="fas fa-undo fa-lg"></i>
+            </span>
+            <span>5 CCW</span>
+          </button>
+      </div>
+      <div class="column is-one-fourt">
+          <button class="button is-link is-medium is-fullwidth" onclick='sendAction("Right1CCW","SetSprockets",false)'>
+            <span class="icon">
+              <i class="fas fa-undo fa-lg"></i>
+            </span>
+            <span>1 CCW</span>
+          </button>
+      </div>
+      <div class="column is-one-fourt">
+          <button class="button is-link is-medium is-fullwidth" onclick='sendAction("RightP1CCW","SetSprockets",false)'>
+            <span class="icon">
+              <i class="fas fa-undo fa-lg"></i>
+            </span>
+            <span>0.1 CCW</span>
+          </button>
+      </div>
+    </div>
+    <div class="columns is-mobile is-variable is-1">
+      <div class="column is-one-fourth">
+          <button class="button is-link is-medium is-fullwidth" onclick='sendAction("Right360CW","SetSprockets",false);'>
+            <span class="icon">
+              <i class="fas fa-redo fa-lg"></i>
+            </span>
+            <span>360 &nbspCW </span>
+          </button>
+      </div>
+      <div class="column is-one-fourth">
+          <button class="button is-link is-medium is-fullwidth" onclick='sendAction("Right5CW","SetSprockets",false)'>
+            <span class="icon">
+              <i class="fas fa-redo fa-lg"></i>
+            </span>
+            <span>5 &nbspCW </span>
+          </button>
+      </div>
+      <div class="column is-one-fourth">
+          <button class="button is-link is-medium is-fullwidth" onclick='sendAction("Right1CW","SetSprockets",false)'>
+            <span class="icon">
+              <i class="fas fa-redo fa-lg"></i>
+            </span>
+            <span>1 &nbspCW </span>
+          </button>
+      </div>
+      <div class="column is-one-fourth">
+          <button class="button is-link is-medium is-fullwidth" onclick='sendAction("RightP1CW","SetSprockets",false)'>
+            <span class="icon">
+              <i class="fas fa-redo fa-lg"></i>
+            </span>
+            <span>0.1 &nbspCW</span>
+          </button>
+      </div>
+    </div>
+</section>
+<section class="section">
+  <div class="columns is-mobile">
+    <div class="column is-one-half">
+      <button class="button is-link is-medium is-fullwidth" onclick='sendAction("Automatic","SetSprockets",false)'>
+        <span>Automatic</span>
+      </button>
+    </div>
+    <div class="column is-one-half">
+      <button class="button is-link is-medium is-fullwidth" onclick='sendAction("SetZero","SetSprockets",true)'>
+        <span>Set Zero</span>
+      </button>
+    </div>
+
+</section>
+<div class="columns is-mobile">
+  <div class="column is-one-half">
+    <button class="button is-primary is-medium is-fullwidth" id='enabler' onclick='location.reload();'>
+      <span class="icon">
+        <i class="fas fa-redo fa-lg"></i>
+      </span>
+      <span>Reload</span>
+    </button>
+  </div>
+  <div class="column is-one-half">
+    <button class="button is-link is-medium is-fullwidth" id='enabler' ondblclick='doubleClick()' onpointerdown='func(event)' onpointerup='revert()'>Enable</button>
+  </div>
+</div>

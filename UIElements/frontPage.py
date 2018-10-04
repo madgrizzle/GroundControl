@@ -21,42 +21,42 @@ import global_variables
 class FrontPage(Screen, MakesmithInitFuncs):
     textconsole    = ObjectProperty(None)
     connectmenu    = ObjectProperty(None) #make ConnectMenu object accessible at this scope
-    gcodecanvas    = ObjectProperty(None) 
-    screenControls = ObjectProperty(None) 
-    
+    gcodecanvas    = ObjectProperty(None)
+    screenControls = ObjectProperty(None)
+
     connectionStatus = StringProperty("Not Connected")
-    
+
     xReadoutPos = StringProperty("0 mm")
     yReadoutPos = StringProperty("0 mm")
     zReadoutPos = StringProperty("0 mm")
     ReadoutVel = StringProperty(" 0 mm/m")
     gcodeVel = StringProperty(" 0 mm/m")
     percentComplete = StringProperty("0.0%")
-    
+
     numericalPosX  = 0.0
     numericalPosY  = 0.0
 
     previousPosX = 0.0
-    previousPosY = 0.0   
+    previousPosY = 0.0
 
     lastpos=(0,0,0)
     lasttime=0.0
     tick=0
-    
+
     stepsizeval  = 0
-    
+
     consoleText  = StringProperty(" ")
-    
+
     units = StringProperty("MM")
     gcodeLineNumber = StringProperty('0')
-    
+
     data         = Data()
-    
-    
+
+
     def __init__(self, data, **kwargs):
         super(FrontPage, self).__init__(**kwargs)
         self.data = data
-        
+
         self.upLeftArrow.btnBackground          = self.data.iconPath + 'UpLeftArrow.png'
         self.upArrow.btnBackground              = self.data.iconPath + 'UpArrow.png'
         self.upRightArrow.btnBackground         = self.data.iconPath + 'UpRightArrow.png'
@@ -66,7 +66,7 @@ class FrontPage(Screen, MakesmithInitFuncs):
         self.downLeftArrow.btnBackground        = self.data.iconPath + 'DownLeftArrow.png'
         self.downArrow.btnBackground            = self.data.iconPath + 'DownArrow.png'
         self.downRightArrow.btnBackground       = self.data.iconPath + 'DownRightArrow.png'
-        
+
         self.macro1Btn.btnBackground            = self.data.iconPath + 'Generic.png'
         self.macro1Btn.textColor                = self.data.fontColor
         self.macro2Btn.btnBackground            = self.data.iconPath + 'Generic.png'
@@ -87,38 +87,41 @@ class FrontPage(Screen, MakesmithInitFuncs):
         self.oneLeft.textColor                  = self.data.fontColor
         self.oneRight.btnBackground             = self.data.iconPath + 'Generic.png'
         self.oneRight.textColor                 = self.data.fontColor
-        
+
         self.run.btnBackground                  = self.data.iconPath + 'RunGreen.png'
         self.holdBtn.btnBackground              = self.data.iconPath + 'HoldYellow.png'
         self.holdBtn.secretText                 = "HOLD"
         self.stopBtn.btnBackground              = self.data.iconPath + 'StopRed.png'
-        
+
         self.goTo.btnBackground                 = self.data.iconPath + 'GoTo.png'
+
+    #def processWebRequest(self, command=None, arguments=None):
+    #    self.zAxisPopup()
 
     def buildReadoutString(self, value):
         '''
-        
+
         Generate the string for the the digital position readout
-        
+
         '''
-        
+
         targetStringLength = 8
         string = '%.2f'%(value)
-        
+
         numberOfSpacesToPad = int(1.5*(targetStringLength - len(string)))
-        
+
         string = ' '*numberOfSpacesToPad + string
-        
+
         return string
-    
+
     def setPosReadout(self, xPos, yPos, zPos):
         self.xReadoutPos    = self.buildReadoutString(xPos)
         self.yReadoutPos    = self.buildReadoutString(yPos)
         self.zReadoutPos    = self.buildReadoutString(zPos)
-        
+
         #So other widgets can access the position
         self.data.zReadoutPos = zPos
-        
+
         #Current Velocity is done here now, not in the firmware.
         self.tick+=1
         if self.tick>=4:    #Can't do this every time... it's too noisy, so we do it every 5rd time (0.1s).
@@ -132,16 +135,16 @@ class FrontPage(Screen, MakesmithInitFuncs):
                     Vel = 0
             else:
                 Vel=0
-                
+
             self.lasttime = time()
             self.lastpos = (xPos, yPos, zPos)
-            
+
             self.ReadoutVel     = self.buildReadoutString(Vel)
         self.numericalPosX  = xPos
         self.numericalPosY  = yPos
-        
+
         #ToDo: Do we want to start logging errors if self.RedoutVel < self.gcodeVel?  How do we know if we're supposed to be moving?
-    
+
     def setUpData(self, data):
         self.gcodecanvas.setUpData(data)
         self.screenControls.setUpData(data)
@@ -152,24 +155,24 @@ class FrontPage(Screen, MakesmithInitFuncs):
         self.data.bind(gcodeFile        = self.onGcodeFileChange)
         self.data.bind(uploadFlag       = self.onUploadFlagChange)
         self.update_macro_titles()
-    
+
     def updateConnectionStatus(self, callback, connected):
         if connected:
             self.connectionStatus = "Connected"
         else:
             self.connectionStatus = "Connection Lost"
-    
+
     def switchUnits(self):
         if self.data.units == "INCHES":
             self.data.units = "MM"
         else:
             self.data.units = "INCHES"
-    
+
     def onUnitsSwitch(self, callback, newUnits):
         self.units = newUnits
         INCHESTOMM  =    1/25.4
         MMTOINCHES  =    25.4
-        
+
         if newUnits == "INCHES":
             self.data.gcode_queue.put('G20 ')
             self.moveDistInput.text = "{0:.2f}".format(float(self.moveDistInput.text)/MMTOINCHES)
@@ -178,7 +181,7 @@ class FrontPage(Screen, MakesmithInitFuncs):
             self.data.gcode_queue.put('G21 ')
             self.moveDistInput.text = "{0:.2f}".format(float(self.moveDistInput.text)/INCHESTOMM)
             self.data.tolerance = 0.5
-    
+
     def onIndexMove(self, callback, newIndex):
         self.gcodeLineNumber = str(newIndex)
         self.percentComplete = '%.1f' %(100* (float(newIndex) / (len(self.data.gcode)-1))) + "%"
@@ -187,10 +190,10 @@ class FrontPage(Screen, MakesmithInitFuncs):
             F = re.search("F(?=.)(([ ]*)?[+-]?([0-9]*)(\.([0-9]+))?)", gCodeLine)
             if F:
                 self.gcodeVel = F.groups()[0]   #Otherwise, it stays what it was...
-            
+
     def onGcodeFileChange(self, callback, newGcode):
         pass
-    
+
     def onUploadFlagChange(self, callback, newFlagValue):
         if self.data.uploadFlag is 0 and self.data.gcodeIndex > 1: #if the machine is stopped partway through a file
             self.holdBtn.secretText = "CONTINUE"
@@ -214,29 +217,29 @@ class FrontPage(Screen, MakesmithInitFuncs):
                 dist = self.data.zMoves[index+moves+1]-self.data.gcodeIndex
 
         self.moveGcodeIndex(dist)
-    
+
     def moveGcodeIndex(self, dist):
         '''
         Move the gcode index by a dist number of lines
         '''
         maxIndex = len(self.data.gcode)-1
         targetIndex = self.data.gcodeIndex + dist
-        
+
         #check to see if we are still within the length of the file
         if maxIndex < 0:              #break if there is no data to read
             return
-        elif targetIndex < 0:             #negative index not allowed 
+        elif targetIndex < 0:             #negative index not allowed
             self.data.gcodeIndex = 0
         elif targetIndex > maxIndex:    #reading past the end of the file is not allowed
             self.data.gcodeIndex = maxIndex
         else:
             self.data.gcodeIndex = targetIndex
-        
+
         gCodeLine = self.data.gcode[self.data.gcodeIndex]
-        
+
         xTarget = 0
         yTarget = 0
-        
+
         try:
             x = re.search("X(?=.)([+-]?([0-9]*)(\.([0-9]+))?)", gCodeLine)
             if x:
@@ -244,18 +247,18 @@ class FrontPage(Screen, MakesmithInitFuncs):
                 self.previousPosX = xTarget
             else:
                 xTarget = self.previousPosX
-            
+
             y = re.search("Y(?=.)([+-]?([0-9]*)(\.([0-9]+))?)", gCodeLine)
             if y:
                 yTarget = float(y.groups()[0])
                 self.previousPosY = yTarget
             else:
                 yTarget = self.previousPosY
-            
+
             self.gcodecanvas.positionIndicator.setPos(xTarget,yTarget,self.data.units)
         except:
             print "Unable to update position for new gcode line"
-    
+
     def pause(self):
         if  self.holdBtn.secretText == "HOLD":
             self.data.uploadFlag = 0
@@ -264,21 +267,21 @@ class FrontPage(Screen, MakesmithInitFuncs):
             self.data.uploadFlag = 1
             self.data.quick_queue.put("~") #send cycle resume command to unpause the machine
             print("Run Resumed")
-    
+
     def jmpsize(self):
         try:
             self.stepsizeval = float(self.moveDistInput.text)
         except:
             pass
-    
+
     def test(self):
         print "test has no current function"
-    
+
     def upLeft(self):
         self.jmpsize()
         self.data.gcode_queue.put("G91 G00 X" + str(-1*self.stepsizeval) + " Y" + str(self.stepsizeval) + " G90 ")
         self.gcodeVel = "[MAN]"
-        
+
     def upRight(self):
         self.jmpsize()
         self.data.gcode_queue.put("G91 G00 X" + str(self.stepsizeval) + " Y" + str(self.stepsizeval) + " G90 ")
@@ -293,12 +296,12 @@ class FrontPage(Screen, MakesmithInitFuncs):
         self.jmpsize()
         self.data.gcode_queue.put("G91 G0 X" + str(-1*self.stepsizeval) + " G90 ")
         self.gcodeVel = "[MAN]"
-        
+
     def right(self):
         self.jmpsize()
         self.data.gcode_queue.put("G91 G0 X" + str(self.stepsizeval) + " G90 ")
         self.gcodeVel = "[MAN]"
-        
+
     def downLeft(self):
         self.jmpsize()
         self.data.gcode_queue.put("G91 G00 X" + str(-1*self.stepsizeval) + " Y" + str(-1*self.stepsizeval) + " G90 ")
@@ -306,14 +309,14 @@ class FrontPage(Screen, MakesmithInitFuncs):
 
     def down(self):
         self.jmpsize()
-        self.data.gcode_queue.put("G91 G00 Y" + str(-1*self.stepsizeval) + " G90 ") 
+        self.data.gcode_queue.put("G91 G00 Y" + str(-1*self.stepsizeval) + " G90 ")
         self.gcodeVel = "[MAN]"
 
     def downRight(self):
         self.jmpsize()
         self.data.gcode_queue.put("G91 G00 X" + str(self.stepsizeval) + " Y" + str(-1*self.stepsizeval) + " G90 ")
         self.gcodeVel = "[MAN]"
-    
+
     def zAxisPopup(self):
         self.popupContent      = ZAxisPopupContent(done=self.dismissZAxisPopup)
         self.popupContent.data = self.data
@@ -321,52 +324,52 @@ class FrontPage(Screen, MakesmithInitFuncs):
         self._popup = Popup(title="Z-Axis", content=self.popupContent,
                             size_hint=(0.5, 0.5))
         self._popup.open()
-    
+
     def dismissZAxisPopup(self):
         '''
-        
+
         Close The Z-Axis Pop-up
-        
+
         '''
         self._popup.dismiss()
-    
+
     def home(self):
         '''
-        
-        Return the machine to it's home position. (0,0) is the default unless the 
+
+        Return the machine to it's home position. (0,0) is the default unless the
         origin has been moved by the user.
-        
+
         '''
-        
+
         self.data.gcode_queue.put("G90  ")
         self.gcodeVel = "[MAN]"
-        
+
         safeHeightMM = float(self.data.config.get('Maslow Settings', 'zAxisSafeHeight'))
         safeHeightInches = safeHeightMM / 25.5
         if self.data.units == "INCHES":
             self.data.gcode_queue.put("G00 Z" + '%.3f'%(safeHeightInches))
         else:
             self.data.gcode_queue.put("G00 Z" + str(safeHeightMM))
-        
+
         self.data.gcode_queue.put("G00 X" + str(self.data.gcodeShift[0]) + " Y" + str(self.data.gcodeShift[1]) + " ")
-        
+
         self.data.gcode_queue.put("G00 Z0 ")
-        
+
     def moveOrigin(self):
         '''
-        
+
         Move the gcode origin to the current location
-        
+
         '''
         self.data.gcodeShift = [self.numericalPosX,self.numericalPosY]
         self.data.config.set('Advanced Settings', 'homeX', str(self.numericalPosX))
         self.data.config.set('Advanced Settings', 'homeY', str(self.numericalPosY))
-    
+
     def startRun(self):
-        
+
         self.data.uploadFlag = 1
         self.sendLine()
-    
+
     def sendLine(self):
         try:
             self.data.gcode_queue.put(self.data.gcode[self.data.gcodeIndex])
@@ -375,20 +378,20 @@ class FrontPage(Screen, MakesmithInitFuncs):
             print "gcode run complete"
             self.gcodecanvas.uploadFlag = 0
             self.data.gcodeIndex = 0
-    
+
     def stopRun(self):
         self.data.uploadFlag = 0
         self.data.gcodeIndex = 0
-        self.data.quick_queue.put("!") 
+        self.data.quick_queue.put("!")
         with self.data.gcode_queue.mutex:
             self.data.gcode_queue.queue.clear()
         self.onUploadFlagChange(self.stopRun, 0)
         print("Gcode Stopped")
-    
+
     def textInputPopup(self, target):
-        
+
         self.targetWidget = target
-        
+
         self.popupContent = TouchNumberInput(done=self.dismiss_popup, data=self.data)
         self._popup = Popup(title="Change increment size of machine movement", content=self.popupContent,
                             size_hint=(0.9, 0.9))
@@ -425,19 +428,19 @@ class FrontPage(Screen, MakesmithInitFuncs):
         elif (keycode[1] == '.') or (keycode[1] =='numpaddecimal'):
             self.popupContent.addText('.')
         elif (keycode[1] == 'backspace'):
-            self.popupContent.textInput.text = self.popupContent.textInput.text[:-1]         
+            self.popupContent.textInput.text = self.popupContent.textInput.text[:-1]
         elif (keycode[1] == 'enter') or (keycode[1] =='numpadenter'):
             self.popupContent.done()
         elif (keycode[1] == 'escape'):     # abort entering a number, keep the old number
             self.popupContent.textInput.text = ''    # clear text so it isn't converted to a number
             self.popupContent.done()
         return True     # always swallow keypresses since this is a modal dialog
-        
+
     def dismiss_popup(self):
         '''
-        
+
         Close The Pop-up
-        
+
         '''
         try:
             tempfloat = float(self.popupContent.textInput.text)
@@ -447,7 +450,7 @@ class FrontPage(Screen, MakesmithInitFuncs):
         self._popup.dismiss()
 
     def gotoLinePopup(self):
-        
+
         self.popupContent = TouchNumberInput(done=self.dismiss_gotoLinePopup, data=self.data)
         self._popup = Popup(title="Go to gcode line", content=self.popupContent,
                             size_hint=(0.9, 0.9))
@@ -458,9 +461,9 @@ class FrontPage(Screen, MakesmithInitFuncs):
 
     def dismiss_gotoLinePopup(self):
         '''
-        
+
         Close The Pop-up
-        
+
         '''
         try:
             line = int(float(self.popupContent.textInput.text))
@@ -470,18 +473,17 @@ class FrontPage(Screen, MakesmithInitFuncs):
                 self.data.gcodeIndex = len(self.data.gcode)
             else:
                 self.data.gcodeIndex = line
-           
+
         except:
             pass                                                             #If what was entered cannot be converted to a number, leave the value the same
         self._popup.dismiss()
-    
+
     def macro(self,index):
         '''
         Execute user defined macro
         '''
-        self.data.gcode_queue.put(self.data.config.get('Maslow Settings', 'macro' + str(index))) 
+        self.data.gcode_queue.put(self.data.config.get('Maslow Settings', 'macro' + str(index)))
 
     def update_macro_titles(self):
         self.macro1Btn.text = self.data.config.get('Maslow Settings', 'macro1_title')
         self.macro2Btn.text = self.data.config.get('Maslow Settings', 'macro2_title')
-
