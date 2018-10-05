@@ -18,7 +18,7 @@ function enableBtn(timeout){
     }
   }
   if(timeout){
-    timer = setTimeout(function(){disableBtn();istrue=false;isDisabled=true},10000)
+    resetTimeout();
   }
 }
 function func(e){
@@ -28,6 +28,11 @@ function func(e){
    } else {
      e.returnValue = false;
    }
+}
+
+function resetTimeout(){
+  if (timer) clearTimeout(timer);
+  timer = setTimeout(function(){disableBtn();istrue=false;isDisabled=true},10000);
 }
 
 function makeChange(){
@@ -116,5 +121,7 @@ function sendAction(action,widget,reload,valueID){
 
   if (reload){
      setTimeout(function(){ location.reload();},1000);
+  } else {
+    resetTimeout();
   }
 }
