@@ -21,7 +21,7 @@ class webHandler(BaseHTTPRequestHandler):
         print self.path
         if self.path.endswith(".css"):
             print "at css"
-            f = open("WebService/"+self.path)
+            f = open("WebService/styles/"+self.path)
             self.send_response(200)
             self.send_header('Content-type', 'text/css')
             self.end_headers()
@@ -30,7 +30,7 @@ class webHandler(BaseHTTPRequestHandler):
             return
         if self.path.endswith(".js"):
             print "at js"
-            f = open("WebService/"+self.path)
+            f = open("WebService/scripts/"+self.path)
             self.send_response(200)
             self.send_header('Content-type', 'text/css')
             self.end_headers()
@@ -190,7 +190,7 @@ class webHandler(BaseHTTPRequestHandler):
             fileName = "MeasureOutChains.html"
         else:
             fileName = "NotFound.html"
-        f = open("WebService/"+fileName)
+        f = open("WebService/views/"+fileName)
         content = f.read()
 
         content+="<script>disableBtn()</script><html>"
