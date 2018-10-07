@@ -668,7 +668,7 @@ class OpticalCalibrationCanvas(GridLayout):
                     self.HomingScanDirection *= -1
                     self.HomingPosY -= 1
                 if (self.HomingPosY!=maxY-1):
-                    self.HomingY -= 7.0  # drop down 7 mm for next square's guess (only)
+                    self.HomingY -= 4.0  # drop down 4 mm for next square's guess (only)
                     self.HomeIn()
                 else:
                     self.inAutoMode = False
@@ -773,12 +773,16 @@ class OpticalCalibrationCanvas(GridLayout):
             ret, image = self.ids.KivyCamera.getCapture()
             if ret:
                 #self.ids.MeasuredImage.update(image)
+                height, width, channels = image.shape
+                #cv2.rectangle(image, (0,0), (width,height), (255,255,255), 15)
                 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
                 gray = cv2.GaussianBlur(gray, (self.gaussianBlurValue, self.gaussianBlurValue), 0)
                 edged = cv2.Canny(gray, self.cannyLowValue, self.cannyHighValue)
                 edged = cv2.dilate(edged, None, iterations=1)
                 edged = cv2.erode(edged, None, iterations=1)
                 cnts = cv2.findContours(edged.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+                cv2.imshow("edged",edged)
+                cv2.waitKey(0)
                 cnts = cnts[0] if imutils.is_cv2() else cnts[1]
                 (cnts, _) = contours.sort_contours(cnts)
                 colors = ((0, 0, 255), (240, 0, 159), (0, 165, 255), (255, 255, 0), (255, 0, 255))
@@ -797,11 +801,13 @@ class OpticalCalibrationCanvas(GridLayout):
                 self.drawCrosshairOnVideoForImagePoint(xA, yA, width, height, colors[4], group='center_marker')
 
                 maxArea = 0
+                print len(cnts)
                 for cTest in cnts:
                     if (cv2.contourArea(cTest)>maxArea):
+                        #if (cv2.contourArea(cTest)<5000):
                         maxArea = cv2.contourArea(cTest)
                         c = cTest
-                if cv2.contourArea(c)>1000:
+                if cv2.contourArea(c)>200:
                     orig = image.copy()
                     #approximate to a square (i.e., four contour segments)
                     cv2.drawContours(orig, [c.astype("int")], -1, (255, 255, 0), 2)
@@ -880,12 +886,12 @@ class OpticalCalibrationCanvas(GridLayout):
                         break
                 else:
                     falseCounter += 1
-                    #if (falseCounter == 10):
-                    #    break
+                    if (falseCounter == 10):
+                        break
             else:
                 falseCounter += 1
-                #if (falseCounter == 10):
-                #    break
+                if (falseCounter == 10):
+                    break
         print "Got 10 images processed, "+str(falseCounter)+" images were bad"
         print "Done Analyzing Images.. Now Averaging and Removing Outliers"
         if dxList.ndim != 0 :
